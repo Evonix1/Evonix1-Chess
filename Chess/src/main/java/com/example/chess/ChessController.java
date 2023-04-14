@@ -109,6 +109,14 @@ public class ChessController {
     Piece wPieceBishop2 = new Bishop(new Square(7, 5), 4, board, null);
     Piece bPieceBishop1 = new Bishop(new Square(0, 2), -4, board, null);
     Piece bPieceBishop2 = new Bishop(new Square(0, 5), -4, board, null);
+    Piece wPieceRook1 = new Rook(new Square(7, 0), 2, board, null);
+    Piece wPieceRook2 = new Rook(new Square(7, 7), 2, board, null);
+    Piece bPieceRook1 = new Rook(new Square(0, 0), -2, board, null);
+    Piece bPieceRook2 = new Rook(new Square(0, 7), -2, board, null);
+    Piece wPieceQueen = new Queen(new Square(7, 3), 5, board, null);
+    Piece bPieceQueen = new Queen(new Square(0, 3), -5, board, null);
+    Piece wPieceKing = new King(new Square(7, 4), 6, board, null);
+    Piece bPieceKing = new King(new Square(0, 4), -6, board, null);
 
 
     List<Piece> listPiece = new ArrayList<Piece>();
@@ -173,6 +181,14 @@ public class ChessController {
         listPiece.add(wPieceBishop2);
         listPiece.add(bPieceBishop1);
         listPiece.add(bPieceBishop2);
+        listPiece.add(wPieceRook1);
+        listPiece.add(wPieceRook2);
+        listPiece.add(bPieceRook1);
+        listPiece.add(bPieceRook2);
+        listPiece.add(wPieceQueen);
+        listPiece.add(bPieceQueen);
+        listPiece.add(wPieceKing);
+        listPiece.add(bPieceKing);
 
         //initialize the pieces
         whiteBishop1.setImage(whiteBishopImage);
@@ -235,6 +251,14 @@ public class ChessController {
         wPieceBishop2.setPieceIMG(whiteBishop2);
         bPieceBishop1.setPieceIMG(blackBishop1);
         bPieceBishop2.setPieceIMG(blackBishop2);
+        wPieceRook1.setPieceIMG(whiteRook1);
+        wPieceRook2.setPieceIMG(whiteRook2);
+        bPieceRook1.setPieceIMG(blackRook1);
+        bPieceRook2.setPieceIMG(blackRook2);
+        wPieceQueen.setPieceIMG(whiteQueen);
+        bPieceQueen.setPieceIMG(blackQueen);
+        wPieceKing.setPieceIMG(whiteKing);
+        bPieceKing.setPieceIMG(blackKing);
     }
 
 
@@ -350,7 +374,12 @@ public class ChessController {
                             }
                         }
                         // change piece's inner board
-                        listPiece.get(i - 1).setBoard(board);
+                        if (i == 0) {
+                            listPiece.get(i).setBoard(board);
+                        } else {
+                            listPiece.get(i - 1).setBoard(board);
+                        }
+
                         // change image location
                         boardPane.setRowIndex(pieceClicked.getPieceIMG(), endingSquare.getRank());
                         boardPane.setColumnIndex(pieceClicked.getPieceIMG(), endingSquare.getFile());
