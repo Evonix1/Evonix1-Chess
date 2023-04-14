@@ -15,6 +15,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ChessController {
     // FXML declarations
@@ -75,11 +78,40 @@ public class ChessController {
     // Variable declarations
     int playerSide = 0;
     int moveSelector = 0;
+    int totalMoves = 0;
     Square initialSquare;
     Square endingSquare;
     Piece pieceClicked;
 
-    Pawn wPiecePawn1 = new Pawn(new Square(6, 0));
+    int[][] board = new int[8][8];
+
+    Piece wPiecePawn1 = new whitePawn(new Square(6, 0), board, null);
+    Piece wPiecePawn2 = new whitePawn(new Square(6, 1), board, null);
+    Piece wPiecePawn3 = new whitePawn(new Square(6, 2), board, null);
+    Piece wPiecePawn4 = new whitePawn(new Square(6, 3), board, null);
+    Piece wPiecePawn5 = new whitePawn(new Square(6, 4), board, null);
+    Piece wPiecePawn6 = new whitePawn(new Square(6, 5), board, null);
+    Piece wPiecePawn7 = new whitePawn(new Square(6, 6), board, null);
+    Piece wPiecePawn8 = new whitePawn(new Square(6, 7), board, null);
+    Piece bPiecePawn1 = new blackPawn(new Square(1, 0), board, null);
+    Piece bPiecePawn2 = new blackPawn(new Square(1, 1), board, null);
+    Piece bPiecePawn3 = new blackPawn(new Square(1, 2), board, null);
+    Piece bPiecePawn4 = new blackPawn(new Square(1, 3), board, null);
+    Piece bPiecePawn5 = new blackPawn(new Square(1, 4), board, null);
+    Piece bPiecePawn6 = new blackPawn(new Square(1, 5), board, null);
+    Piece bPiecePawn7 = new blackPawn(new Square(1, 6), board, null);
+    Piece bPiecePawn8 = new blackPawn(new Square(1, 7), board, null);
+    Piece wPieceKnight1 = new Knight(new Square(7, 1), 3, board, null);
+    Piece wPieceKnight2 = new Knight(new Square(7, 6), 3, board, null);
+    Piece bPieceKnight1 = new Knight(new Square(0, 1), -3, board, null);
+    Piece bPieceKnight2 = new Knight(new Square(0, 6), -3, board, null);
+    Piece wPieceBishop1 = new Bishop(new Square(7, 2), 4, board, null);
+    Piece wPieceBishop2 = new Bishop(new Square(7, 5), 4, board, null);
+    Piece bPieceBishop1 = new Bishop(new Square(0, 2), -4, board, null);
+    Piece bPieceBishop2 = new Bishop(new Square(0, 5), -4, board, null);
+
+
+    List<Piece> listPiece = new ArrayList<Piece>();
 
     InputStream streamWBishop = new FileInputStream("/Users/davidsmth/IdeaProjects/Chess/src/main/java/com/example/chess/whiteBishop.png");
     Image whiteBishopImage = new Image(streamWBishop);
@@ -110,6 +142,39 @@ public class ChessController {
 
 
     public void initialize() {
+        //initialize the board
+        board[7] = new int[] {2, 3, 4, 5, 6, 4, 3, 2};
+        board[6] = new int[] {1, 1, 1, 1, 1, 1, 1, 1};
+        board[1] = new int[] {-1, -1, -1, -1, -1, -1, -1, -1};
+        board[0] = new int[] {-2, -3, -4, -5, -6, -4, -3, -2};
+
+        // put pieces in list
+        listPiece.add(wPiecePawn1);
+        listPiece.add(wPiecePawn2);
+        listPiece.add(wPiecePawn3);
+        listPiece.add(wPiecePawn4);
+        listPiece.add(wPiecePawn5);
+        listPiece.add(wPiecePawn6);
+        listPiece.add(wPiecePawn7);
+        listPiece.add(wPiecePawn8);
+        listPiece.add(bPiecePawn1);
+        listPiece.add(bPiecePawn2);
+        listPiece.add(bPiecePawn3);
+        listPiece.add(bPiecePawn4);
+        listPiece.add(bPiecePawn5);
+        listPiece.add(bPiecePawn6);
+        listPiece.add(bPiecePawn7);
+        listPiece.add(bPiecePawn8);
+        listPiece.add(wPieceKnight1);
+        listPiece.add(wPieceKnight2);
+        listPiece.add(bPieceKnight1);
+        listPiece.add(bPieceKnight2);
+        listPiece.add(wPieceBishop1);
+        listPiece.add(wPieceBishop2);
+        listPiece.add(bPieceBishop1);
+        listPiece.add(bPieceBishop2);
+
+        //initialize the pieces
         whiteBishop1.setImage(whiteBishopImage);
         whiteBishop2.setImage(whiteBishopImage);
         whiteKnight1.setImage(whiteKnightImage);
@@ -143,12 +208,42 @@ public class ChessController {
         blackPawn6.setImage(blackPawnImage);
         blackPawn7.setImage(blackPawnImage);
         blackPawn8.setImage(blackPawnImage);
+
+        // give the pieces their images
+
+        wPiecePawn1.setPieceIMG(whitePawn1);
+        wPiecePawn2.setPieceIMG(whitePawn2);
+        wPiecePawn3.setPieceIMG(whitePawn3);
+        wPiecePawn4.setPieceIMG(whitePawn4);
+        wPiecePawn5.setPieceIMG(whitePawn5);
+        wPiecePawn6.setPieceIMG(whitePawn6);
+        wPiecePawn7.setPieceIMG(whitePawn7);
+        wPiecePawn8.setPieceIMG(whitePawn8);
+        bPiecePawn1.setPieceIMG(blackPawn1);
+        bPiecePawn2.setPieceIMG(blackPawn2);
+        bPiecePawn3.setPieceIMG(blackPawn3);
+        bPiecePawn4.setPieceIMG(blackPawn4);
+        bPiecePawn5.setPieceIMG(blackPawn5);
+        bPiecePawn6.setPieceIMG(blackPawn6);
+        bPiecePawn7.setPieceIMG(blackPawn7);
+        bPiecePawn8.setPieceIMG(blackPawn8);
+        wPieceKnight1.setPieceIMG(whiteKnight1);
+        wPieceKnight2.setPieceIMG(whiteKnight2);
+        bPieceKnight1.setPieceIMG(blackKnight1);
+        bPieceKnight2.setPieceIMG(blackKnight2);
+        wPieceBishop1.setPieceIMG(whiteBishop1);
+        wPieceBishop2.setPieceIMG(whiteBishop2);
+        bPieceBishop1.setPieceIMG(blackBishop1);
+        bPieceBishop2.setPieceIMG(blackBishop2);
     }
 
 
     public void move(ActionEvent e) {
+        // get source button
         Button buttonPressed = (Button) e.getSource();
+        // check if its first square clicked
         if (moveSelector == 0) {
+            // get button location
             int row;
             int column;
             if (boardPane.getRowIndex(buttonPressed) == null) {
@@ -161,16 +256,44 @@ public class ChessController {
             } else {
                 column = boardPane.getColumnIndex(buttonPressed);
             }
+            // create square with button's location
             initialSquare = new Square(row, column);
             System.out.println(initialSquare.toString());
-            if (initialSquare.getFile() == wPiecePawn1.getSquare().getFile()) {
-                if (initialSquare.getRank() == wPiecePawn1.getSquare().getRank()) {
-                    moveSelector = 1;
-                    pieceClicked = wPiecePawn1;
-                    return;
+            System.out.println(totalMoves);
+
+            // check if we are actually clicking a piece
+            for (int i = 0; i < listPiece.size(); i++) {
+                Piece tempPieceHolder;
+                tempPieceHolder = listPiece.get(i);
+                if (initialSquare.getFile() == tempPieceHolder.getSquare().getFile()) {
+                    if (initialSquare.getRank() == tempPieceHolder.getSquare().getRank()) {
+                        // check if its white or black's move
+                        if (totalMoves % 2 == 0) {
+                            if (tempPieceHolder.getValue() > 0) {
+                                System.out.println(tempPieceHolder);
+                                System.out.println("valid");
+                                // save values for next part of move function
+                                moveSelector = 1;
+                                pieceClicked = tempPieceHolder;
+                                return;
+                            }
+                        } else if (totalMoves % 2 == 1) {
+                            if (tempPieceHolder.getValue() < 0) {
+                                System.out.println(tempPieceHolder);
+                                System.out.println("valid");
+                                // save values for next part of move function
+                                moveSelector = 1;
+                                pieceClicked = tempPieceHolder;
+                                return;
+                            }
+                        }
+
+                    }
                 }
             }
+        // check for second part of move function
         } else if (moveSelector == 1) {
+            // get button location
             int row;
             int column;
             if (boardPane.getRowIndex(buttonPressed) == null) {
@@ -183,20 +306,60 @@ public class ChessController {
             } else {
                 column = boardPane.getColumnIndex(buttonPressed);
             }
+            // create square with button location
             endingSquare = new Square(row, column);
             System.out.println(endingSquare.toString());
+            // create move with the two squares
             Move moveMade = new Move(initialSquare, endingSquare);
             System.out.println(moveMade);
+            // get move legality
             boolean moveLegality = pieceClicked.isMovePossible(moveMade);
             System.out.println(moveLegality);
+            // check move legality
             if (moveLegality == true) {
+                // increase move count
+                totalMoves++;
+                // change piece location
                 pieceClicked.setSquare(endingSquare);
-                if (pieceClicked == wPiecePawn1) {
-                    boardPane.setRowIndex(whitePawn1, endingSquare.getRank());
-                    boardPane.setColumnIndex(whitePawn1, endingSquare.getFile());
+                // edit board array
+                board[initialSquare.getRank()][initialSquare.getFile()] = 0; // Set the starting square to empty
+                board[endingSquare.getRank()][endingSquare.getFile()] = pieceClicked.getValue(); // Set the ending square to the moved piece's value
+                // print out board
+                for (int i = 0; i < 8; i++) {
+                    System.out.println(Arrays.toString(board[i]));
                 }
-                moveSelector = 0;
+                // go through list of pieces and find the one that you clicked previously
+                for (int i = 0; i < listPiece.size(); i++) {
+                    if (pieceClicked == listPiece.get(i)) {
+                        // loop for checking if there is a capture
+                        for (int j = 0; j < listPiece.size(); j++) {
+                            // check if we are dealing with the same piece (skip this)
+                            if (pieceClicked == listPiece.get(j)) {
+                                continue;
+                            }
+                            // see if we actually have a capture
+                            if (endingSquare.getRank() == listPiece.get(j).getSquare().getRank()) {
+                                if (endingSquare.getFile() == listPiece.get(j).getSquare().getFile()) {
+                                    // fucking delete the captured piece
+                                    listPiece.get(j).setSquare(new Square(9, 9));
+                                    listPiece.get(j).getPieceIMG().setVisible(false);
+                                    listPiece.remove(j);
+                                    // stop loop (efficiency)
+                                    break;
+                                }
+                            }
+                        }
+                        // change piece's inner board
+                        listPiece.get(i - 1).setBoard(board);
+                        // change image location
+                        boardPane.setRowIndex(pieceClicked.getPieceIMG(), endingSquare.getRank());
+                        boardPane.setColumnIndex(pieceClicked.getPieceIMG(), endingSquare.getFile());
+                    }
+                    // reset move function
+                    moveSelector = 0;
+                }
             } else {
+                // reset squares (illegal move attempt)
                 initialSquare = null;
                 endingSquare = null;
                 moveSelector = 0;
@@ -376,6 +539,8 @@ public class ChessController {
             boardPane.setColumnIndex(blackPawn8, 7);
         }
     }
+
+
 
     //Exceptions
     public ChessController() throws FileNotFoundException {

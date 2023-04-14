@@ -22,4 +22,11 @@ public class Square {
     public String toString() {
         return "Rank: " + rank + " File: " + file;
     }
+
+    public boolean equals(Square s){
+        if(this.rank == s.getRank() && this.file == s.getFile()){
+            return true;
+        }
+        return false;
+    }
 }

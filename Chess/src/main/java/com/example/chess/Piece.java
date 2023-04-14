@@ -1,11 +1,31 @@
 package com.example.chess;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 
 public class Piece {
     Square location;
-    public Piece(Square s) {
+    int[][] board;
+    int value;
+    ImageView pieceIMG;
+    public Piece(Square s, int v, int[][] board, ImageView iv) {
         location = s;
+        value = v;
+        pieceIMG = iv;
+    }
+    public ImageView getPieceIMG() {
+        return pieceIMG;
+    }
+    public void setPieceIMG(ImageView iv) {
+        pieceIMG = iv;
+    }
+    public int[][] getBoard() {
+        return board;
+    }
+    public void setBoard(int[][] b) {
+        board = b;
     }
     public int getRank() {
         return location.getRank();
@@ -24,6 +44,9 @@ public class Piece {
     }
     public void setFile(int f) {
         location.setFile(f);
+    }
+    public int getValue() {
+        return value;
     }
     public ArrayList<Move> getPossibleMoves() {
         return null;
