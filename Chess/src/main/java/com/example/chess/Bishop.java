@@ -5,7 +5,7 @@ import javafx.scene.image.ImageView;
 public class Bishop extends Piece{
     int[][] board = new int[8][8];
     public Bishop(Square s, int v, int[][] b, ImageView iv) {
-        super(s,v,b,iv);
+        super(s,v,b,iv, true);
         board = b;
     }
     @Override
@@ -15,6 +15,16 @@ public class Bishop extends Piece{
         int f1 = m.getStartSquare().getFile();
         int r2 = m.getEndSquare().getRank();
         int f2 = m.getEndSquare().getFile();
+
+        if (this.getValue() < 0) {
+            if (this.getBoard()[r2][f2] == -1 || this.getBoard()[r2][f2] == -2 || this.getBoard()[r2][f2] == -3 || this.getBoard()[r2][f2] == -4 || this.getBoard()[r2][f2] == -5 || this.getBoard()[r2][f2] == -6) {
+                return false;
+            }
+        } else if (this.getValue() > 0) {
+            if (this.getBoard()[r2][f2] == 1 || this.getBoard()[r2][f2] == 2 || this.getBoard()[r2][f2] == 3 || this.getBoard()[r2][f2] == 4 || this.getBoard()[r2][f2] == 5 || this.getBoard()[r2][f2] == 6) {
+                return false;
+            }
+        }
 
         // check if move is going on a diagonal
         int diagonalDifference = Math.abs(r1 - r2);

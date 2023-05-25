@@ -3,12 +3,14 @@ package com.example.chess;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import org.controlsfx.control.action.Action;
 
 import java.io.File;
@@ -18,11 +20,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class ChessController {
     // FXML declarations
     @FXML public AnchorPane anchorPane;
-    @FXML public GridPane boardPane;
+    @FXML public static GridPane boardPane;
     @FXML public Label fileLabel1;
     @FXML public Label fileLabel2;
     @FXML public Label fileLabel3;
@@ -72,7 +75,8 @@ public class ChessController {
     @FXML public ImageView blackPawn6;
     @FXML public ImageView blackPawn7;
     @FXML public ImageView blackPawn8;
-
+    @FXML public Text whiteCheckStatus;
+    @FXML public Text blackCheckStatus;
 
 
     // Variable declarations
@@ -83,7 +87,7 @@ public class ChessController {
     Square endingSquare;
     Piece pieceClicked;
 
-    int[][] board = new int[8][8];
+    public static int[][] board = new int[8][8];
 
     Piece wPiecePawn1 = new whitePawn(new Square(6, 0), board, null);
     Piece wPiecePawn2 = new whitePawn(new Square(6, 1), board, null);
@@ -115,11 +119,11 @@ public class ChessController {
     Piece bPieceRook2 = new Rook(new Square(0, 7), -2, board, null);
     Piece wPieceQueen = new Queen(new Square(7, 3), 5, board, null);
     Piece bPieceQueen = new Queen(new Square(0, 3), -5, board, null);
-    Piece wPieceKing = new King(new Square(7, 4), 6, board, null);
-    Piece bPieceKing = new King(new Square(0, 4), -6, board, null);
+    King wPieceKing = new King(new Square(7, 4), 6, board, null, wPieceRook1, wPieceRook2);
+    King bPieceKing = new King(new Square(0, 4), -6, board, null, bPieceRook1, bPieceRook2);
 
 
-    List<Piece> listPiece = new ArrayList<Piece>();
+    public static List<Piece> listPiece = new ArrayList<Piece>();
 
     InputStream streamWBishop = new FileInputStream("/Users/davidsmth/IdeaProjects/Chess/src/main/java/com/example/chess/whiteBishop.png");
     Image whiteBishopImage = new Image(streamWBishop);
@@ -289,6 +293,9 @@ public class ChessController {
             for (int i = 0; i < listPiece.size(); i++) {
                 Piece tempPieceHolder;
                 tempPieceHolder = listPiece.get(i);
+                if (tempPieceHolder.getExists() == false) {
+                    continue;
+                }
                 if (initialSquare.getFile() == tempPieceHolder.getSquare().getFile()) {
                     if (initialSquare.getRank() == tempPieceHolder.getSquare().getRank()) {
                         // check if its white or black's move
@@ -338,8 +345,55 @@ public class ChessController {
             System.out.println(moveMade);
             // get move legality
             boolean moveLegality = pieceClicked.isMovePossible(moveMade);
-            System.out.println(moveLegality);
+            // print out board (for debugging)
+            for (int i = 0; i < 8; i++) {
+                System.out.println(Arrays.toString(board[i]));
+            }
+            // set up temporary board to check for checks
+            int[][] tempBoard = board;
+            tempBoard[initialSquare.getRank()][initialSquare.getFile()] = 0; // Set the starting square to empty
+            tempBoard[endingSquare.getRank()][endingSquare.getFile()] = pieceClicked.getValue(); // Set the ending square to the moved piece's value
+            // set kings inner board to temp board to check for checks
+            wPieceKing.setBoard(tempBoard);
+            bPieceKing.setBoard(tempBoard);
+            // exception if king is being moved
+            if (pieceClicked.getValue() == 6) {
+                wPieceKing.setSquare(endingSquare);
+            } else if (pieceClicked.getValue() == -6) {
+                bPieceKing.setSquare(endingSquare);
+            }
+            // check for illegal in check moves
+            if (totalMoves % 2 == 0) {
+                if (wPieceKing.checkForCheck()) {
+                    moveLegality = false;
+                }
+            } else if (totalMoves % 2 == 1) {
+                if (bPieceKing.checkForCheck()) {
+                    moveLegality = false;
+                }
+            }
+            // display status
+            if (moveLegality) {
+                whiteCheckStatus.setText("White King Check Status: " + wPieceKing.checkForCheck());
+                blackCheckStatus.setText("Black King Check Status: " + bPieceKing.checkForCheck());
+            }
+            board[initialSquare.getRank()][initialSquare.getFile()] = pieceClicked.getValue();; // Set the starting square to empty
+            board[endingSquare.getRank()][endingSquare.getFile()] = 0; // Set the ending square to the moved piece's value
+            // print out board (for debugging)
+            for (int i = 0; i < 8; i++) {
+                System.out.println(Arrays.toString(board[i]));
+            }
+            // reset stuff
+            wPieceKing.setBoard(board);
+            bPieceKing.setBoard(board);
+            // same exception
+            if (pieceClicked.getValue() == 6) {
+                wPieceKing.setSquare(initialSquare);
+            } else if (pieceClicked.getValue() == -6) {
+                bPieceKing.setSquare(initialSquare);
+            }
             // check move legality
+            System.out.println("Move Legality: " + moveLegality);
             if (moveLegality == true) {
                 // increase move count
                 totalMoves++;
@@ -348,7 +402,7 @@ public class ChessController {
                 // edit board array
                 board[initialSquare.getRank()][initialSquare.getFile()] = 0; // Set the starting square to empty
                 board[endingSquare.getRank()][endingSquare.getFile()] = pieceClicked.getValue(); // Set the ending square to the moved piece's value
-                // print out board
+                // print out board (for debugging)
                 for (int i = 0; i < 8; i++) {
                     System.out.println(Arrays.toString(board[i]));
                 }
@@ -361,34 +415,84 @@ public class ChessController {
                             if (pieceClicked == listPiece.get(j)) {
                                 continue;
                             }
+                            if (listPiece.get(j).getExists() == false) {
+                                continue;
+                            }
                             // see if we actually have a capture
                             if (endingSquare.getRank() == listPiece.get(j).getSquare().getRank()) {
                                 if (endingSquare.getFile() == listPiece.get(j).getSquare().getFile()) {
                                     // fucking delete the captured piece
                                     listPiece.get(j).setSquare(new Square(9, 9));
                                     listPiece.get(j).getPieceIMG().setVisible(false);
-                                    listPiece.remove(j);
+                                    listPiece.get(j).setExists(false);
                                     // stop loop (efficiency)
                                     break;
                                 }
                             }
                         }
                         // change piece's inner board
-                        if (i == 0) {
-                            listPiece.get(i).setBoard(board);
-                        } else {
-                            listPiece.get(i - 1).setBoard(board);
+                        listPiece.get(i).setBoard(board);
+                        // check if we have a promotion
+                        if (listPiece.get(i).getValue() == 1 || listPiece.get(i).getValue() == -1) {
+                            if (listPiece.get(i).getValue() == 1) {
+                                if (listPiece.get(i).getSquare().getRank() == 0) {
+                                    String promotionChosen = choosePromotion();
+                                    if (promotionChosen == "Queen") {
+                                        Piece newPromotedPiece = new Queen(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), 5, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(whiteQueenImage);
+                                    } else if (promotionChosen == "Rook") {
+                                        Piece newPromotedPiece = new Rook(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), 2, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(whiteRookImage);
+                                    } else if (promotionChosen == "Bishop") {
+                                        Piece newPromotedPiece = new Bishop(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), 4, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(whiteBishopImage);
+                                    } else if (promotionChosen == "Knight") {
+                                        Piece newPromotedPiece = new Knight(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), 3, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(whiteKnightImage);
+                                    } else {
+                                        System.out.println("something messed up in promotion");
+                                    }
+                                }
+                            } else {
+                                if (listPiece.get(i).getSquare().getRank() == 7) {
+                                    String promotionChosen = choosePromotion();
+                                    if (promotionChosen == "Queen") {
+                                        Piece newPromotedPiece = new Queen(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), -5, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(blackQueenImage);
+                                    } else if (promotionChosen == "Rook") {
+                                        Piece newPromotedPiece = new Rook(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), -2, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(blackRookImage);
+                                    } else if (promotionChosen == "Bishop") {
+                                        Piece newPromotedPiece = new Bishop(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), -4, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(blackBishopImage);
+                                    } else if (promotionChosen == "Knight") {
+                                        Piece newPromotedPiece = new Knight(new Square(listPiece.get(i).getRank(), listPiece.get(i).getFile()), -3, board, listPiece.get(i).getPieceIMG());
+                                        listPiece.set(i, newPromotedPiece);
+                                        listPiece.get(i).getPieceIMG().setImage(blackKnightImage);
+                                    } else {
+                                        System.out.println("something messed up in promotion");
+                                    }
+                                }
+                            }
                         }
-
                         // change image location
                         boardPane.setRowIndex(pieceClicked.getPieceIMG(), endingSquare.getRank());
                         boardPane.setColumnIndex(pieceClicked.getPieceIMG(), endingSquare.getFile());
+
                     }
                     // reset move function
                     moveSelector = 0;
                 }
             } else {
                 // reset squares (illegal move attempt)
+                System.out.println("illegal move attempted");
                 initialSquare = null;
                 endingSquare = null;
                 moveSelector = 0;
@@ -396,6 +500,25 @@ public class ChessController {
         }
     }
 
+    public String choosePromotion() {
+        List<String> choices = new ArrayList<>();
+        choices.add("Queen");
+        choices.add("Rook");
+        choices.add("Bishop");
+        choices.add("Knight");
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("Queen", choices);
+        dialog.setTitle("Choose promotion");
+        dialog.setHeaderText("Your pawn went on a mighty journey");
+        dialog.setContentText("Choose your promotion:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            return result.get();
+        } else {
+            return "Queen";
+        }
+    }
 
     public void changeSide() {
         if (playerSide == 0) {
@@ -569,9 +692,12 @@ public class ChessController {
         }
     }
 
+    public boolean checkForWCheckmate() {
+
+    }
 
 
-    //Exceptions
+    //Exceptions.
     public ChessController() throws FileNotFoundException {
     }
 

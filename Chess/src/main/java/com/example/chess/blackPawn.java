@@ -8,7 +8,7 @@ public class blackPawn extends Piece{
     int value = 1;
     int[][] board;
     public blackPawn(Square s, int[][] b, ImageView iv) {
-        super(s, -1, b, iv);
+        super(s, -1, b, iv, true);
         location = s;
         board = b;
     }

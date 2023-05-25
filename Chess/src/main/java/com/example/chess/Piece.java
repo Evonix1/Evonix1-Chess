@@ -10,13 +10,36 @@ public class Piece {
     int[][] board;
     int value;
     ImageView pieceIMG;
-    public Piece(Square s, int v, int[][] board, ImageView iv) {
+    boolean exists;
+    boolean hasMoved = false;
+    public Piece(Square s, int v, int[][] board, ImageView iv, boolean e) {
         location = s;
         value = v;
         pieceIMG = iv;
+        exists = e;
+        this.board = board;
+    }
+    public void changeHasMoved() {
+        if (hasMoved == true) {
+            hasMoved = false;
+        } else {
+            hasMoved = true;
+        }
+    }
+    public void changeHasMovedToTrue() {
+        hasMoved = true;
+    }
+    public boolean getHasMoved() {
+        return hasMoved;
     }
     public ImageView getPieceIMG() {
         return pieceIMG;
+    }
+    public boolean getExists() {
+        return exists;
+    }
+    public void setExists(boolean e) {
+        exists = e;
     }
     public void setPieceIMG(ImageView iv) {
         pieceIMG = iv;

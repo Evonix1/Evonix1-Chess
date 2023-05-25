@@ -3,9 +3,10 @@ package com.example.chess;
 import javafx.scene.image.ImageView;
 
 public class Rook extends Piece{
-    int[][] board = new int[8][8];
+    int[][] board;
+    boolean hasMoved = false;
     public Rook(Square s, int v, int[][] b, ImageView iv) {
-        super(s,v,b,iv);
+        super(s,v,b,iv, true);
         board = b;
     }
     @Override
@@ -18,6 +19,15 @@ public class Rook extends Piece{
         int absRowDiff = Math.abs(r2 - r1);
         int absFileDiff = Math.abs(f2 - f1);
 
+        if (this.getValue() < 0) {
+            if (this.getBoard()[r2][f2] == -1 || this.getBoard()[r2][f2] == -2 || this.getBoard()[r2][f2] == -3 || this.getBoard()[r2][f2] == -4 || this.getBoard()[r2][f2] == -5 || this.getBoard()[r2][f2] == -6) {
+                return false;
+            }
+        } else if (this.getValue() > 0) {
+            if (this.getBoard()[r2][f2] == 1 || this.getBoard()[r2][f2] == 2 || this.getBoard()[r2][f2] == 3 || this.getBoard()[r2][f2] == 4 || this.getBoard()[r2][f2] == 5 || this.getBoard()[r2][f2] == 6) {
+                return false;
+            }
+        }
 
         if (f1 == f2) {
             int rowDifference = r2 - r1;
@@ -36,6 +46,8 @@ public class Rook extends Piece{
                         return false;
                     }
                 }
+                hasMoved = true;
+                changeHasMovedToTrue();
                 return true;
             } else if (rowDifference < 0) {
                 for (int i = 1; i < absRowDiff; i++) {
@@ -44,6 +56,8 @@ public class Rook extends Piece{
                         return false;
                     }
                 }
+                hasMoved = true;
+                changeHasMovedToTrue();
                 return true;
             } else {
                 return false;
@@ -64,6 +78,8 @@ public class Rook extends Piece{
                         return false;
                     }
                 }
+                hasMoved = true;
+                changeHasMovedToTrue();
                 return true;
             } else if (fileDifference < 0) {
                 for (int i = 1; i < absFileDiff; i++) {
@@ -72,6 +88,8 @@ public class Rook extends Piece{
                         return false;
                     }
                 }
+                hasMoved = true;
+                changeHasMovedToTrue();
                 return true;
             } else {
                 return false;
